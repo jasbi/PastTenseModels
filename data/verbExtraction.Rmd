@@ -1,0 +1,59 @@
+---
+title: "Verb Extraction"
+author: "LIN 205C Class"
+date: "`r Sys.Date()`"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(childesr)
+library(tidyverse)
+library(feather)
+```
+
+
+# Loading English Tokens
+
+Tokens for Adam in Brown Corpus
+```{r}
+adam_tokens<- get_tokens(collection = c("Eng-NA", "Eng-UK"),
+                            corpus = "Brown",
+                            role = c("target_child","Mother", "Father"),
+                            target_child = "Adam",
+                            token = "*")
+```
+
+Tokens for children in all english corpora
+```{r}
+english_tokens<- get_tokens(collection = c("Eng-NA", "Eng-UK"),
+                            role = c("target_child","Mother", "Father"),
+                            token = "*")
+```
+
+# Gets all verb tokens
+```{r}
+verb_tokens <- english_tokens %>%
+  filter(target_child_age >= 0 & target_child_age <= 72,
+         part_of_speech == "v") %>%
+  select(gloss, stem, target_child_age, speaker_role, target_child_id, utterance_id) %>%
+  arrange(target_child_age)
+verb_tokens
+```
+
+# Tokens with No Part of Speech Tag
+```{r}
+tokens_no_tag <- adam_tokens %>%
+  filter(part_of_speech == "")
+tokens_no_tag
+```
+
+
+# Saving Verb Tokens to Feather File
+```{r}
+write_feather(verb_tokens, "../processed_data/verb_tokens.feather")
+```
+
+To Do:
+1. Look at how many cells do not have part of speech tags
+2. Look at distribution of production of tokens
