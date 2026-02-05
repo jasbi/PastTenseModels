@@ -33,7 +33,7 @@ english_tokens<- get_tokens(collection = c("Eng-NA", "Eng-UK"),
 
 # Token Processing
 
-## Obtains all verb tokens
+## Obtains all verb tokens = 690360
 ```{r}
 verb_tokens <- english_tokens %>%
   filter(target_child_age >= 0 & target_child_age <= 72,
@@ -42,6 +42,23 @@ verb_tokens <- english_tokens %>%
   arrange(target_child_age)
 verb_tokens
 ```
+
+## Obtains all tokens that have no tag = 573846
+```{r}
+notag_tokens <- english_tokens %>%
+  filter(target_child_age >= 0 & target_child_age <= 72,
+         part_of_speech == "") %>%
+  select(gloss, stem, target_child_age, speaker_role, target_child_id, utterance_id) %>%
+  arrange(target_child_age)
+notag_tokens
+```
+
+
+## Looking at english_tokens = 7026215
+```{r}
+english_tokens
+```
+
 
 ## Obtains tokens with no part of speech tag
 ```{r}
