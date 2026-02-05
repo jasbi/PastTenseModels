@@ -6,7 +6,7 @@ library(readr)
 # -----------------------------
 # 1) Load verb list (tab-delimited, no header)
 # -----------------------------
-ref_path <- "/Users/isildogan/Desktop/english_merged.txt"
+ref_path <- "/Users/isildogan/Desktop/english_merged.txt" #change the path file
 #I got this list from RevisitPinkerAndPrince
 ref <- read_tsv(
   ref_path,
