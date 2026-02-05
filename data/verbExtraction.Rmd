@@ -12,10 +12,9 @@ library(tidyverse)
 library(feather)
 ```
 
-
 # Loading English Tokens
 
-Tokens for Adam in Brown Corpus
+## Tokens for Adam in Brown Corpus
 ```{r}
 adam_tokens<- get_tokens(collection = c("Eng-NA", "Eng-UK"),
                             corpus = "Brown",
@@ -24,14 +23,17 @@ adam_tokens<- get_tokens(collection = c("Eng-NA", "Eng-UK"),
                             token = "*")
 ```
 
-Tokens for children in all english corpora
+## Tokens for children in all English corpora
 ```{r}
+# Note: takes a few minutes to run
 english_tokens<- get_tokens(collection = c("Eng-NA", "Eng-UK"),
                             role = c("target_child","Mother", "Father"),
                             token = "*")
 ```
 
-# Gets all verb tokens
+# Token Processing
+
+## Obtains all verb tokens
 ```{r}
 verb_tokens <- english_tokens %>%
   filter(target_child_age >= 0 & target_child_age <= 72,
@@ -41,13 +43,12 @@ verb_tokens <- english_tokens %>%
 verb_tokens
 ```
 
-# Tokens with No Part of Speech Tag
+## Obtains tokens with no part of speech tag
 ```{r}
-tokens_no_tag <- adam_tokens %>%
+adam_tokens_no_tag <- adam_tokens %>%
   filter(part_of_speech == "")
-tokens_no_tag
+adam_tokens_no_tag
 ```
-
 
 # Saving Verb Tokens to Feather File
 ```{r}
