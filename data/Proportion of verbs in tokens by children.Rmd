@@ -1,0 +1,70 @@
+---
+title: "Proportion of verbs in tokens by children (not per child avg)"
+author: "Isil Dogan"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+
+```{r}
+library(childesr)
+library(dplyr)
+library(ggplot2)
+```
+
+
+# 1-child tokens in Eng-NA and Eng-UK
+
+
+```{r}
+child_eng_prod <- get_tokens(
+  collection = c("Eng-NA", "Eng-UK"),
+  role       = "target_child",
+  token      = "*"
+)
+```
+
+# 2-ages 0–72 months. instead of floor, we can round?
+
+```{r}
+child_eng_0_72 <- child_eng_prod %>%
+  filter(!is.na(target_child_age),
+         target_child_age >= 0,
+         target_child_age <= 72) %>%
+  mutate(age_month = floor(target_child_age))
+```
+
+# 3- proportion of verbs by month
+
+```{r}
+verb_prop_by_month <- child_eng_0_72 %>%
+  group_by(age_month) %>%
+  summarise(
+    n_tokens   = n(),
+    n_verbs    = sum(part_of_speech == "v", na.rm = TRUE),
+    prop_verbs = n_verbs / n_tokens,
+    .groups = "drop"
+  )
+```
+
+# 4- graph
+
+```{r}
+ggplot(verb_prop_by_month, aes(x = age_month, y = prop_verbs)) +
+  geom_line() +
+  geom_point(size = 1.5) +
+  geom_smooth(se = TRUE) +
+  scale_x_continuous(breaks = seq(0, 72, 6)) +
+  labs(
+    x = "Age (months)",
+    y = "Proportion of verb tokens (verbs / all tokens)",
+    title = "Proportion of verbs in children's tokens (0–72 months)"
+  ) +
+  theme_minimal()
+```
