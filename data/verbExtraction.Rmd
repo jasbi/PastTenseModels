@@ -1,6 +1,6 @@
 ---
 title: "Verb Extraction"
-author: "LIN 205C Class"
+author: "Debbie Odufuwa"
 date: "`r Sys.Date()`"
 output: pdf_document
 ---
@@ -9,69 +9,138 @@ output: pdf_document
 knitr::opts_chunk$set(echo = TRUE)
 library(childesr)
 library(tidyverse)
-library(feather)
 ```
 
 # Loading English Tokens
 
-## Tokens for Adam in Brown Corpus
-```{r}
-adam_tokens<- get_tokens(collection = c("Eng-NA", "Eng-UK"),
-                            corpus = "Brown",
-                            role = c("target_child","Mother", "Father"),
-                            target_child = "Adam",
-                            token = "*")
-```
-
-## Tokens for children in all English corpora
+## Tokens for children in English corpora
 ```{r}
 # Note: takes a few minutes to run
-english_tokens<- get_tokens(collection = c("Eng-NA", "Eng-UK"),
+english_tokens <- get_tokens(collection = c("Eng-NA", "Eng-UK"),
                             role = c("target_child","Mother", "Father"),
                             token = "*")
 ```
 
 # Token Processing
 
-## Obtains all verb tokens = 690360
+## Extracting Verb Tokens
+
+### All verb tokens between 0-36 months (small dataset)
 ```{r}
-verb_tokens <- english_tokens %>%
+verb_tokens_small <- english_tokens %>%
+  filter(target_child_age >= 0 & target_child_age <= 36,
+         part_of_speech == "v") %>%
+  select(gloss, stem, target_child_age, speaker_role, target_child_id, utterance_id) %>%
+  arrange(target_child_age)
+verb_tokens_small
+```
+
+### All verb tokens between 0-72 months (large dataset)
+```{r}
+verb_tokens_large <- english_tokens %>%
   filter(target_child_age >= 0 & target_child_age <= 72,
          part_of_speech == "v") %>%
   select(gloss, stem, target_child_age, speaker_role, target_child_id, utterance_id) %>%
   arrange(target_child_age)
-verb_tokens
+verb_tokens_large
 ```
 
-## Obtains all tokens that have no tag = 573846
+### Saves verb token extractions to CSV file
 ```{r}
-notag_tokens <- english_tokens %>%
+write.csv(verb_tokens_small, "../data/verb_tokens_small.csv", row.names = F)
+```
+
+```{r}
+write.csv(verb_tokens_large, "../data/verb_tokens_large.csv", row.names = F)
+```
+
+## Extracting Untagged Tokens
+
+### All tokens that have no tag between 0-36 months
+```{r}
+untagged_tokens_small <- english_tokens %>%
+  filter(target_child_age >= 0 & target_child_age <= 36,
+         part_of_speech == "") %>%
+  select(gloss, stem, target_child_age, speaker_role, target_child_id, utterance_id) %>%
+  arrange(target_child_age)
+untagged_tokens_small
+```
+
+### All tokens that have no tag between 0-72 months
+```{r}
+untagged_tokens_large<- english_tokens %>%
   filter(target_child_age >= 0 & target_child_age <= 72,
          part_of_speech == "") %>%
   select(gloss, stem, target_child_age, speaker_role, target_child_id, utterance_id) %>%
   arrange(target_child_age)
-notag_tokens
+untagged_tokens_large
 ```
 
-
-## Looking at english_tokens = 7026215
+### Helpful Info
 ```{r}
-english_tokens
+print(paste("Total Tokens: ", nrow(english_tokens)))
+
+print(paste("Verb Tokens (0-36): ", nrow(verb_tokens_small)))
+print(paste("Untagged Tokens (0-36): ", nrow(untagged_tokens_small)))
+print(paste("Proportion Untagged Tokens (0-36): ",
+            nrow(untagged_tokens_small) / nrow(english_tokens)))
+
+print(paste("Verb Tokens (0-72): ", nrow(verb_tokens_large)))
+print(paste("Untagged Tokens (0-72): ", nrow(untagged_tokens_large)))
+print(paste("Proportion Untagged Tokens (0-72): ",
+            nrow(untagged_tokens_large) / nrow(english_tokens)))
 ```
 
+It isn't the case that a large portion of tokens in the data frame do not have
+tags. So we did not go through and classify untagged verb tokens and add them 
+to our verb data frame.
 
-## Obtains tokens with no part of speech tag
+
+# CELEX Phonetic Encoding
+
+The code below adds columns for the CELEX transcription of the stem and past tense
+used in Kirov and Cotterell (2018).
+<!--https://github.com/ckirov/RevisitPinkerAndPrince/blob/master/experiment_1/english_merged.txt-->
+
+## Reads in the CELEX Data Set
 ```{r}
-adam_tokens_no_tag <- adam_tokens %>%
-  filter(part_of_speech == "")
-adam_tokens_no_tag
+celex_path <- "../data/english_merged.txt"
+celex_dict <-
+  read.table(celex_path, header = FALSE, sep = "\t", quote = "", fill = T,
+             col.names = c("stem", "past_tense", "stem_celex",
+                           "past_tense_celex", "reg_irreg"),
+             stringsAsFactors = F)
+
+celex_dict
 ```
 
-# Saving Verb Tokens to Feather File
+## Merges CELEX info into verb_tokens_small by matching on the "stem" column
 ```{r}
-write_feather(verb_tokens, "../processed_data/verb_tokens.feather")
+verb_tokens_transcribed <-
+  verb_tokens_small %>%
+  left_join(celex_dict %>%
+              select(stem, past_tense, stem_celex, past_tense_celex),
+    by = "stem") %>%
+  select(gloss, target_child_age, speaker_role, target_child_id,
+         utterance_id, stem, stem_celex_encoding = stem_celex,
+         past_tense, past_tense_celex_encoding = past_tense_celex)
+
+verb_tokens_transcribed
 ```
+
+## Saves new data frame to CSV file
+```{r}
+write.csv(verb_tokens_transcribed,
+          "../data/verb_tokens_transcribed.csv", row.names = FALSE)
+```
+
+Use this CSV file in celexToIPA.py (!)
+
+
 
 To Do:
-1. Look at how many cells do not have part of speech tags
-2. Look at distribution of production of tokens
+1. Not every verb token has a CELEX transcription found in english_merged.txt :(
+2. celexToIPA.py doesn't transcribe tokens in the same way as in Kirov and Cotterell (2018)
+  - See examples in Table 1 of the paper and compare with correspoding IPA
+  transcriptions in verb_tokens_transcribed.csv for reference
+3. Figure out whether using American or British IPA
