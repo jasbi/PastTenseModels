@@ -1,6 +1,6 @@
 ---
 title: "Verb Extraction"
-author: "Debbie Odufuwa"
+author: "Debbie Odufuwa & Jane Kwon"
 date: "`r Sys.Date()`"
 output: pdf_document
 ---
