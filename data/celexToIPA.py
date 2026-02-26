@@ -4,8 +4,11 @@ Debbie Odufuwa
 2026-02-19
 
 Adds IPA transcription columns to verb_tokens_transcribed.csv using phonecodes 2.x.
-Reads stem_celex_encoding and past_tense_celex_encoding, converts DISC/CELEX to IPA
-with phonecodes (language=English), and writes two new columns: stem_ipa, past_tense_ipa.
+
+The code reads in the CELEX phonological encoding of the stem (stem_celex_encoding) and 
+the CELEX phonological encoding of the past tense of the stem (past_tense_celex_encoding).
+Then it converts the CELEX encodings to IPA using the phonecodes python package (language=English),
+and writes two new columns: stem_ipa, past_tense_ipa.
 
 Requires: pip install phonecodes>=2.0.0
 
