@@ -98,8 +98,8 @@ to our verb data frame.
 
 # CELEX Phonetic Encoding
 
-The code below adds columns for the CELEX transcription of the stem and past tense
-used in Kirov and Cotterell (2018).
+The code below adds columns for the CELEX transcription/phonological encoding
+of the stem and past tense used in Kirov and Cotterell (2018).
 <!--https://github.com/ckirov/RevisitPinkerAndPrince/blob/master/experiment_1/english_merged.txt-->
 
 ## Reads in the CELEX Data Set
@@ -137,12 +137,29 @@ write.csv(verb_tokens_transcribed,
 Use this CSV file in celexToIPA.py (!)
 
 
+# Updates / To Do
 
-To Do:
-1. Not every verb token has a CELEX transcription found in english_merged.txt :(
-2. celexToIPA.py doesn't transcribe tokens in the same way as in Kirov and Cotterell (2018)
-  - See examples in Table 1 of the paper and compare with corresponding IPA
+1. Not every verb token in the CHILDES data frame that we created has a 
+corresponding CELEX transcription used in Kirov and Cotterell (2018)
+
+2. celexToIPA.py transcribes tokens using a different transcription scheme
+  - See examples in Table 1 of the paper and compare with corresponding IPA 
   transcriptions in verb_tokens_transcribed.csv for reference
-3. Figure out whether using American or British IPA. 
+  
+  Ours:   sing sIN sang s&N sɪŋ saŋ
+  Kirov:  sing sIN sang s&N sɪŋ sæŋ
+  
+3. Unclear whether Kirov and Cotterell (2018) & CELEX transcription uses
+American or British IPA.
   - See "start", "determine" - no /ɹ/ sound transcribed. Could be a mix of the two Englishes.
   - Other examples: "know" and "go" transcribed with /əʊ/ (which is the British IPA vs /oʊ/ in American IPA)
+  
+  
+  
+# All Data Frames
+```{r}
+verb_tokens_small
+verb_tokens_large
+verb_tokens_transcribed
+verb_tokens_transcribed_ipa
+```
