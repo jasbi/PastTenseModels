@@ -154,6 +154,10 @@ American or British IPA.
   - See "start", "determine" - no /ɹ/ sound transcribed. Could be a mix of the two Englishes.
   - Other examples: "know" and "go" transcribed with /əʊ/ (which is the British IPA vs /oʊ/ in American IPA)
   
+4. For tokens without a CELEX encoding,
+  1) Extract list of words without encoding to new csv/txt
+  2) Use a package to create ARPABET encodings of the words
+  3) Use phonecodes python package to convert ARPABET encodings to IPA
   
   
 # All Data Frames
