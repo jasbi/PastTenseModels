@@ -13,7 +13,7 @@ library(tidyverse)
 
 # Loading English Tokens
 
-## Tokens for children in English corpora
+## All tokens for children and parents in Eng-NA & Eng-Uk Collections of CHILDES
 ```{r}
 # Note: takes a few minutes to run
 english_tokens <- get_tokens(collection = c("Eng-NA", "Eng-UK"),
@@ -134,36 +134,61 @@ write.csv(verb_tokens_transcribed,
           "../data/verb_tokens_transcribed.csv", row.names = FALSE)
 ```
 
-Use this CSV file in celexToIPA.py (!)
+Use the verb_tokens_transcribed CSV file as input to celexToIPA.py (!)
+
+# All Data Frames
+```{r}
+verb_tokens_small # N = 1218430 "verb" tokens
+verb_tokens_large # N = 1869937 "verb" tokens
+verb_tokens_transcribed # small dataset with CELEX encoding
+verb_tokens_transcribed_ipa  # small dataset with CELEX+IPA encodings
+```
 
 
 # Updates / To Do
 
-1. Not every verb token in the CHILDES data frame that we created has a 
-corresponding CELEX transcription used in Kirov and Cotterell (2018)
+0.5. It seems each utterance ID is not unique. Redo code using gloss ID
 
-2. celexToIPA.py transcribes tokens using a different transcription scheme
+1. Part of speech tags in CHILDES are not correct for all of the gloss and
+some tokens are misclassified as verbs (big issue!!!)
+  - Possible resolution method: Using the gloss ID for the verb, provide NLTK tagger
+  with corresponding sentence containing the verb to provide part of speech tags
+  and get the part of speech for the token. (Ensures that a token is a verb given the context)
+  
+  Ex) 
+  gloss stem  target_child_age  speaker_role  target_child_id utterance_id
+  dog   dog   3.460030          Target_Child  23465           17230451
+  
+```{r}
+english_tokens %>% filter(gloss == "dog", target_child_id == 23465, utterance_id == 17230451)
+```
+
+2. Not every verb token in the CHILDES data frame that we have is in the list
+of verbs used by Kirov and Cotterell (2018)
+  - So some verbs in the final data frame do not have: celex encoding or past tense
+  - Possible resolution method: Find a way to get past tense of verb and then do step 5.)
+
+3. celexToIPA.py transcribes tokens using a different transcription scheme (CELEX2).
+Currently have not found a way to get original transcription scheme used in paper.
   - See examples in Table 1 of the paper and compare with corresponding IPA 
   transcriptions in verb_tokens_transcribed.csv for reference
   
-  Ours:   sing sIN sang s&N sɪŋ saŋ
-  Kirov:  sing sIN sang s&N sɪŋ sæŋ
+  Ours:   sing  sang  sɪŋ   saŋ
+          go    went  ɡəʊ   wɛnt
+  Kirov:  sing  sang  sɪŋ   sæŋ
+          go    went  goʊ   wɛnt
   
-3. Unclear whether Kirov and Cotterell (2018) & CELEX transcription uses
+4. Unclear whether Kirov and Cotterell (2018) & CELEX transcription uses
 American or British IPA.
   - See "start", "determine" - no /ɹ/ sound transcribed. Could be a mix of the two Englishes.
   - Other examples: "know" and "go" transcribed with /əʊ/ (which is the British IPA vs /oʊ/ in American IPA)
   
-4. For tokens without a CELEX encoding,
-  1) Extract list of words without encoding to new csv/txt
+5. For tokens without a CELEX encoding,
+  1) Extract list of words without phonological encoding to new csv/txt
   2) Use a package to create ARPABET encodings of the words
   3) Use phonecodes python package to convert ARPABET encodings to IPA
+  4) Merge into verb_tokens_transcribed_ipa to get complete dataset
   
+  OR just use an IPA transcription tokenizer to transcribe all stems
   
-# All Data Frames
-```{r}
-verb_tokens_small
-verb_tokens_large
-verb_tokens_transcribed
-verb_tokens_transcribed_ipa
-```
+6. Kirov paper also has a column for the past particple. Do we need to consider this as well?
