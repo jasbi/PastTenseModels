@@ -38,11 +38,14 @@ that were produced by children (ages 0;0 to 7;0) and their caretakers.
 `celexToIPA.py` was then created to merge the IPA transcriptions for the verbs found in CHILDES based on the transcriptions in `english_merged.txt`. The CSV files `verb_tokens_large.csv`, `verb_tokens_small.csv`, `verb_tokens_transcribed.csv` and
 `verb_tokens_transcribed_ipa.csv` were then created.
 
-We then ran into issues where CELEX did not have all the verbs that were in CHILDES. We also noticed other issues such as non-verbs that were tagged and English vs NA english transcription. 
+We then ran into issues the following issues:
+- CELEX did not have all the verbs that were in CHILDES. 
+- Some non-verbs were tagged as verbs.
+- The CELEX transcriptions may be British English transcriptions.
 
 Because English and NA English do not have wild differences in past tense, we disregard this issue.
 
-For all other issues, we turned to Claude. See `add_missing_transcription.ipynb` and the README in `/claude` for more details.
+For the other issues, we turned to Claude. See `add_missing_transcription.ipynb` and the README in `/claude` for more details.
 
 ### Set up & Install (not tested)
 

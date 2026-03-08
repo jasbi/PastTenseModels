@@ -21,6 +21,8 @@ Some uncommon/nonce verbs (like adventure, animal) had no IPA available — thos
 203 words were excluded as non-verbs (nouns, interjections, malformed forms, etc.).
 ```
 
+Claude was then asked to add IPA transcriptions for the ones it left blank, and it did.
+
 ## Files
 - `excluded_non_verbs.txt` 
 The 203 words tagged as a verb in the CHILDES database that Claude found not to be verbs.
