@@ -33,7 +33,7 @@ Columns of interest include 'stem', 'stem_ipa', 'past_tense', 'past_tense_ipa', 
 ### Background/History
 
 We first worked off of `verbExtraction.Rmd` and Isil's R files (`child_eng_verbs_isil.R` and `parent_eng_verbs_isil.R`). These files compiled words tagged as verbs from CHILDES-DB
-that were produced by children (ages 0;0 to 7;0) and their caretakers.
+that were produced by children (ages 0;0 to 7;0) and their caregivers.
 
 `celexToIPA.py` was then created to merge the IPA transcriptions for the verbs found in CHILDES based on the transcriptions in `english_merged.txt`. The CSV files `verb_tokens_large.csv`, `verb_tokens_small.csv`, `verb_tokens_transcribed.csv` and
 `verb_tokens_transcribed_ipa.csv` were then created.
